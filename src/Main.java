@@ -4,63 +4,54 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
-/*
-    L'escola Sant Ramon Nonat Sagrat Cor del barri de Les Corts de Barcelona, us ha encomanat la programació
-    del joc del penjat per a que els seus alumnes del cicle inicial de primària aprenguin noves paraules.
-
-    Aquest joc ha de consistir en triar una paraula a l'atzar, de 30 paraules que es tenen emmagatzemades. El programa
-    ha de mostrar una màscara amb tants llocs com lletres tingui la paraula que s'ha d'encertar.
-
-    L'usuari anirà introduint lletres i si aquestes existeixen a la paraula es col·locaran en el lloc corresponent i
-    en cas contrari es tindrà un error.
-
-    El joc s'acaba en cas d'encertar totes les lletres de la paraula o s'han comès 6 errors.
-
-*/
-
-
     public static void main(String[] args) {
         String[] words;
-        String word, usedLetters = "";
+        String word, usedLetters;
         char[] mask;
         boolean win, find;
-        int errors = 0;
-        char letter;
-
+        int errors;
+        char letter, cont;
+        Scanner scanner = new Scanner(System.in);
 
         words = fillWords();
-        word = chooseWord(words);
-        mask = createMask(word);
-
         do {
-            showMan(errors);
-//            showUsedLetters(usedLetters);
-            showLetters("LETRAS UTILIZADAS", usedLetters);
-            //System.out.println(String.valueOf(mask));
-            showLetters("PALABRA", String.valueOf(mask));
+            word = chooseWord(words);
+            mask = createMask(word);
+            usedLetters = "";
+            errors = 0;
+            do {
+                showMan(errors);
+                showLetters("LETRAS UTILIZADAS", usedLetters);
+                //System.out.println(String.valueOf(mask));
+                showLetters("PALABRA", String.valueOf(mask));
 
-            letter = Character.toUpperCase(askLetter());
+                letter = Character.toUpperCase(askLetter());
 
-            if (!usedLetters.contains(Character.toString(letter))) {
-                usedLetters += letter;
-                find = updateMask(word, mask, letter);
-                if (!find) {
+                if (!usedLetters.contains(Character.toString(letter))) {
+                    usedLetters += letter;
+                    find = updateMask(word, mask, letter);
+                    if (!find) {
+                        errors++;
+                    }
+                } else {
+                    System.out.println("Ya habías utilizado esa letra");
                     errors++;
                 }
+
+                win = word.equals(String.valueOf(mask));
+            } while (!win && errors < 6);
+
+            showLetters("PALABRA", word);
+            if (!win) {
+                showMan(errors);
             } else {
-                System.out.println("Ya habías utilizado esa letra");
-                errors++;
+                showWin();
             }
 
-            win = word.equals(String.valueOf(mask));
-        } while (!win && errors < 6);
+            System.out.print("¿Qieres jugar otra vez (S/N): ");
+            cont = Character.toUpperCase(scanner.next().charAt(0));
 
-        showLetters("PALABRA", word);
-        if (!win) {
-            showMan(errors);
-        } else {
-            showWin();
-        }
+        } while (cont == 'S');
     }
 
     private static void showLetters(String titles, String word) {
@@ -86,17 +77,6 @@ public class Main {
 
         System.out.println();
     }
-
-//    private static void showUsedLetters(String usedLetters) {
-//        if (usedLetters.length() > 0) {
-//            System.out.print("Letras usadas: ");
-//            System.out.print(usedLetters.charAt(0));
-//            for (int i = 1; i < usedLetters.length(); i++) {
-//                System.out.print("," + usedLetters.charAt(i));
-//            }
-//            System.out.println();
-//        }
-//    }
 
     private static void showWin() {
         System.out.println(" .-=========-.");
